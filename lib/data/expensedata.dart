@@ -1,4 +1,5 @@
 import 'package:expensetracker/convertor/daytimeConvertor.dart';
+import 'package:expensetracker/data/hivedatabase.dart';
 import 'package:expensetracker/models/expenseitems.dart';
 import 'package:flutter/material.dart';
 
@@ -11,15 +12,26 @@ class ExpenseData extends ChangeNotifier {
     return overallExpenseList;
   }
 
+  // Prepare data to display when user first starts app up
+  final db = HiveDataBase();
+  void prepareData() {
+    // if data already exists
+    if (db.readData().isNotEmpty) {
+      overallExpenseList = db.readData();
+    }
+  }
+
   //method to add a new expense
   void addExpense(ExepenseItem expense) {
     overallExpenseList.add(expense);
     notifyListeners();
+    db.saveData(overallExpenseList);
   }
 
   // function to delete expense
   void deleteExpense(ExepenseItem expense) {
     overallExpenseList.remove(expense);
+    db.saveData(overallExpenseList);
   }
 
   // to get weekday
@@ -61,11 +73,13 @@ class ExpenseData extends ChangeNotifier {
     return startOfWeek!;
   }
 
-  //need to list all expenses
-  // get exepenselist
-  // add and delete expenses
-  // get weekday
-  // get date for start of the week
+  /*
+  -> need to list all expenses
+  -> get exepenselist
+  -> add and delete expenses
+  -> get weekday
+  -> get date for start of the week
+  */
 
   /*
   convert expense data to expense summary

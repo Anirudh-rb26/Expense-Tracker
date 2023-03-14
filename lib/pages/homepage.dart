@@ -16,6 +16,14 @@ class _HomePageState extends State<HomePage> {
   final newExpenseNameController = TextEditingController();
   final newExpenseAmountController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    // prepare data on startup
+    Provider.of<ExpenseData>(context, listen: false).prepareData();
+  }
+
   void addExpense() {
     showDialog(
         context: context,
@@ -28,14 +36,13 @@ class _HomePageState extends State<HomePage> {
                   TextField(
                     controller: newExpenseNameController,
                     decoration: const InputDecoration(
-                      hintText: "Where did you spend the money?"
-                    ),
+                        hintText: "Where did you spend the money?"),
                   ),
                   // expense amount
                   TextField(
                     controller: newExpenseAmountController,
                     keyboardType: const TextInputType.numberWithOptions(),
-                    decoration:  const InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "Amount",
                     ),
                   ),
@@ -85,33 +92,30 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<ExpenseData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.grey[300],
-        floatingActionButton: FloatingActionButton(
-          onPressed: addExpense,
-          backgroundColor: Colors.black,
-          child: const Icon(Icons.add),
-        ),
-        body: ListView(
-          children: [
-            // weekly summary
-            ExpenseSummary(startOfWeek: value.startOfTheWeekDate()),
+          backgroundColor: Colors.grey[300],
+          floatingActionButton: FloatingActionButton(
+            onPressed: addExpense,
+            backgroundColor: Colors.black,
+            child: const Icon(Icons.add),
+          ),
+          body: ListView(
+            children: [
+              // weekly summary
+              ExpenseSummary(startOfWeek: value.startOfTheWeekDate()),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // expense list
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: value.getAllExpenseList().length,
-              itemBuilder: (context, index) => ExpenseTile(
-                name: value.getAllExpenseList()[index].name,
-                amount: value.getAllExpenseList()[index].amount,
-                dateTime: value.getAllExpenseList()[index].dateTime
-              )
-            ),
-          ],
-        )
-      ),
+              // expense list
+              ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: value.getAllExpenseList().length,
+                  itemBuilder: (context, index) => ExpenseTile(
+                      name: value.getAllExpenseList()[index].name,
+                      amount: value.getAllExpenseList()[index].amount,
+                      dateTime: value.getAllExpenseList()[index].dateTime)),
+            ],
+          )),
     );
   }
 }
