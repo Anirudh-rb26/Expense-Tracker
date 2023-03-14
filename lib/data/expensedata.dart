@@ -45,7 +45,7 @@ class ExpenseData extends ChangeNotifier {
   }
 
   // to get start of the week
-  DateTime? startOfTheWeek() {
+  DateTime startOfTheWeekDate() {
     DateTime? startOfWeek;
 
     //get todays date
@@ -53,12 +53,12 @@ class ExpenseData extends ChangeNotifier {
 
     // going backwards to find the nearest sunday
     for (int i = 0; i < 7; i++) {
-      if (getDayName(today.subtract(Duration(days: i))) == "Sunday") {
+      if (getDayName(today.subtract(Duration(days: i))) == 'Sunday') {
         startOfWeek = today.subtract(Duration(days: i));
       }
     }
 
-    return startOfWeek;
+    return startOfWeek!;
   }
 
   //need to list all expenses
