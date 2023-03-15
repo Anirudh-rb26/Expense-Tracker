@@ -64,15 +64,24 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
+  // delete expense
+  void deleteExpense(ExepenseItem expense) {
+    Provider.of<ExpenseData>(context, listen: false).deleteExpense(expense); 
+  }
+
   void save() {
-    // creating expense item
-    ExepenseItem newExpense = ExepenseItem(
-      name: newExpenseNameController.text,
-      amount: newExpenseAmountController.text,
-      dateTime: DateTime.now(),
-    );
-    // adding the new expense item
-    Provider.of<ExpenseData>(context, listen: false).addExpense(newExpense);
+    // ony save if all fields are filled
+    if (newExpenseAmountController.text.isNotEmpty &&
+        newExpenseNameController.text.isNotEmpty) {
+      // creating expense item
+      ExepenseItem newExpense = ExepenseItem(
+        name: newExpenseNameController.text,
+        amount: newExpenseAmountController.text,
+        dateTime: DateTime.now(),
+      );
+      // adding the new expense item
+      Provider.of<ExpenseData>(context, listen: false).addExpense(newExpense);
+    }
     Navigator.pop(context);
     clear();
   }
@@ -92,30 +101,35 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<ExpenseData>(
       builder: (context, value, child) => Scaffold(
-          backgroundColor: Colors.grey[300],
-          floatingActionButton: FloatingActionButton(
-            onPressed: addExpense,
-            backgroundColor: Colors.black,
-            child: const Icon(Icons.add),
-          ),
-          body: ListView(
-            children: [
-              // weekly summary
-              ExpenseSummary(startOfWeek: value.startOfTheWeekDate()),
+        backgroundColor: Colors.grey[300],
+        floatingActionButton: FloatingActionButton(
+          onPressed: addExpense,
+          backgroundColor: Colors.black,
+          child: const Icon(Icons.add),
+        ),
+        body: ListView(
+          children: [
+            // weekly summary
+            ExpenseSummary(startOfWeek: value.startOfTheWeekDate()),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-              // expense list
-              ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: value.getAllExpenseList().length,
-                  itemBuilder: (context, index) => ExpenseTile(
-                      name: value.getAllExpenseList()[index].name,
-                      amount: value.getAllExpenseList()[index].amount,
-                      dateTime: value.getAllExpenseList()[index].dateTime)),
-            ],
-          )),
+            // expense list
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.getAllExpenseList().length,
+              itemBuilder: (context, index) => ExpenseTile(
+                name: value.getAllExpenseList()[index].name,
+                amount: value.getAllExpenseList()[index].amount,
+                dateTime: value.getAllExpenseList()[index].dateTime,
+                deleteTapped: (p0) =>
+                    deleteExpense(value.getAllExpenseList()[index]),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
